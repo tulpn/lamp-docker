@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  web:
+    build: ./apache2
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - ./htdocs:/var/www/html
+      - ./logs:/var/log/apache/
+      - ./php/php.ini:/usr/local/etc/php/conf.d/999-customphp.ini
+  db:
+    image: mariadb
+    env_file: .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: volume
+        source: dbdata
+        target: /var/lib/mysql
+        consistency: delegated
+
+volumes:
+  dbdata:
